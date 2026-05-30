@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProjectFlow</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- AUTH VIEW -->
+<div id="auth-view" class="auth-view hidden">
+  <div class="auth-container">
+    <div class="auth-brand">
+      <div class="brand-icon">PF</div>
+      <h1>ProjectFlow</h1>
+      <p>Collaborate. Organize. Ship.</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign In</button>
+        <button class="auth-tab" data-tab="register">Sign Up</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required />
+        </div>
+        <div id="login-error" class="form-error hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="reg-username" placeholder="yourname" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Min. 6 characters" required />
+        </div>
+        <div id="register-error" class="form-error hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell" class="hidden">
+  <!-- TOP NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <button class="nav-brand" id="nav-home">
+        <span class="brand-icon-sm">PF</span>
+        <span class="brand-text">ProjectFlow</span>
+      </button>
+      <button class="btn btn-nav" id="btn-new-project">+ New Project</button>
+    </div>
+    <div class="navbar-right">
+      <div class="notif-wrapper">
+        <button class="btn-icon" id="btn-notifications" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="notif-badge" class="badge hidden">0</span>
+        </button>
+        <div id="notif-dropdown" class="notif-dropdown hidden">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <button class="btn-link" id="btn-mark-all-read">Mark all read</button>
+          </div>
+          <div id="notif-list" class="notif-list"></div>
+        </div>
+      </div>
+      <div class="user-menu-wrapper">
+        <button class="user-avatar-btn" id="btn-user-menu">
+          <div class="avatar" id="nav-avatar"></div>
+          <span id="nav-username"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="user-dropdown" class="user-dropdown hidden">
+          <div class="dropdown-info">
+            <div class="avatar lg" id="dropdown-avatar"></div>
+            <div>
+              <div id="dropdown-username" class="fw-bold"></div>
+              <div id="dropdown-email" class="text-muted small"></div>
+            </div>
+          </div>
+          <hr />
+          <button class="dropdown-item" id="btn-logout">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="hidden">
+      <div class="dashboard-header">
+        <h2>My Projects</h2>
+      </div>
+      <div id="projects-grid" class="projects-grid"></div>
+    </div>
+
+    <!-- BOARD VIEW -->
+    <div id="board-view" class="hidden">
+      <div class="board-header">
+        <div class="board-header-left">
+          <button class="btn-icon btn-back" id="btn-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div id="board-project-color" class="project-color-dot"></div>
+          <h2 id="board-project-name"></h2>
+        </div>
+        <div class="board-header-right">
+          <div id="board-members" class="member-avatars"></div>
+          <button class="btn btn-sm btn-outline" id="btn-manage-members">Members</button>
+          <button class="btn btn-sm btn-outline" id="btn-project-settings">Settings</button>
+        </div>
+      </div>
+      <div id="kanban-board" class="kanban-board"></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL: NEW PROJECT -->
+<div id="modal-new-project" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create New Project</h3>
+      <button class="modal-close" data-modal="modal-new-project">&times;</button>
+    </div>
+    <form id="form-new-project">
+      <div class="form-group">
+        <label>Project Name *</label>
+        <input type="text" id="new-project-name" placeholder="My Awesome Project" required />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="new-project-desc" placeholder="What's this project about?" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-picker" id="project-color-picker"></div>
+      </div>
+      <div id="new-project-error" class="form-error hidden"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-modal="modal-new-project">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: TASK DETAIL -->
+<div id="modal-task" class="modal-overlay hidden">
+  <div class="modal modal-task-detail">
+    <button class="modal-close" data-modal="modal-task">&times;</button>
+    <div class="task-modal-body">
+      <div class="task-modal-main">
+        <div class="task-board-label" id="task-board-label"></div>
+        <h2 class="task-title-heading" id="task-title-display" contenteditable="true" spellcheck="false"></h2>
+        <div class="task-section">
+          <div class="task-section-label">Description</div>
+          <div id="task-description-display" class="task-description" contenteditable="true"
+            data-placeholder="Add a description..."></div>
+        </div>
+        <div class="task-section">
+          <div class="task-section-label">Comments</div>
+          <div id="comments-list" class="comments-list"></div>
+          <div class="comment-input-row">
+            <div class="avatar sm" id="comment-avatar"></div>
+            <div class="comment-input-wrap">
+              <textarea id="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+              <button class="btn btn-primary btn-sm" id="btn-submit-comment">Post</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-modal-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Assignee</div>
+          <div id="assignee-display" class="assignee-select-btn" id="btn-assign"></div>
+          <select id="task-assignee-select" class="form-select">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Priority</div>
+          <select id="task-priority-select" class="form-select priority-select">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Due Date</div>
+          <input type="date" id="task-due-date" class="form-input" />
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Column</div>
+          <select id="task-board-select" class="form-select">
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Labels</div>
+          <div id="task-labels" class="labels-wrap"></div>
+          <div class="label-input-row">
+            <input type="text" id="label-input" class="form-input" placeholder="Add label..." />
+            <button class="btn btn-sm btn-outline" id="btn-add-label">+</button>
+          </div>
+        </div>
+        <div class="sidebar-section sidebar-meta">
+          <div class="meta-row"><span class="text-muted small">Created by</span> <span id="task-creator"></span></div>
+          <div class="meta-row"><span class="text-muted small">Created</span> <span id="task-created-at"></span></div>
+        </div>
+        <button class="btn btn-danger btn-full mt-auto" id="btn-delete-task">Delete Task</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MEMBERS -->
+<div id="modal-members" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Project Members</h3>
+      <button class="modal-close" data-modal="modal-members">&times;</button>
+    </div>
+    <div class="member-search-row">
+      <input type="text" id="member-search" placeholder="Search by username or email..." class="form-input" />
+      <div id="member-search-results" class="search-results hidden"></div>
+    </div>
+    <div id="members-list" class="members-list"></div>
+  </div>
+</div>
+
+<!-- MODAL: PROJECT SETTINGS -->
+<div id="modal-project-settings" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Project Settings</h3>
+      <button class="modal-close" data-modal="modal-project-settings">&times;</button>
+    </div>
+    <form id="form-project-settings">
+      <div class="form-group">
+        <label>Project Name</label>
+        <input type="text" id="settings-project-name" required />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="settings-project-desc" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-picker" id="settings-color-picker"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="btn-delete-project">Delete Project</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/board.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
